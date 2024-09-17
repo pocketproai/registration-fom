@@ -1,64 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Registration Form</title>
+    <title>Register Form</title>
 </head>
 <body>
-    <h2>Pro Registration</h2>
-    <form id="registerForm">
+    <form action="https://18.117.250.10/auth/register" method="POST">
         <label for="full_name">Full Name:</label><br>
-        <input type="text" id="full_name" name="full_name"><br><br>
+        <input type="text" id="full_name" name="full_name" required><br><br>
 
         <label for="email">Email:</label><br>
         <input type="email" id="email" name="email" required><br><br>
 
+        <label for="booking_link">Booking Link:</label><br>
+        <input type="url" id="booking_link" name="booking_link" required><br><br>
+
+        <label for="system_description">System Description:</label><br>
+        <input type="text" id="system_description" name="system_description" required><br><br>
+
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br><br>
 
-        <label for="booking_link">Booking Link:</label><br>
-        <input type="url" id="booking_link" name="booking_link"><br><br>
-
-        <label for="system_description">System Description:</label><br>
-        <textarea id="system_description" name="system_description"></textarea><br><br>
-
-        <button type="submit">Register</button>
+        <button type="submit">Submit</button>
     </form>
-
-    <script>
-        document.getElementById('registerForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const fullName = document.getElementById('full_name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const bookingLink = document.getElementById('booking_link').value;
-            const systemDescription = document.getElementById('system_description').value;
-
-            const data = {
-                full_name: fullName,
-                email: email,
-                password: password,
-                booking_link: bookingLink,
-                system_description: systemDescription
-            };
-
-            fetch('http://18.117.250.10:5000/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Registration successful: ' + data.message);
-            })
-            .catch(error => {
-                alert('Error: ' + error);
-            });
-        });
-    </script>
 </body>
 </html>
