@@ -42,8 +42,8 @@
 <body>
   <h2>Login4</h2>
   <form id="loginForm">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
+    <label for="email">Email:</label> <!-- Changed to Email -->
+    <input type="text" id="email" name="email" required>
 
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" required>
@@ -70,18 +70,16 @@
   <script>
     document.getElementById("loginForm").addEventListener("submit", function(event) {
       event.preventDefault();
-      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;  // Changed to email
       const password = document.getElementById("password").value;
 
-
-      
       // Send POST request to the login API
       fetch('https://thepocketproaiservice.online/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',  // Ensure JSON format is specified
         },
-        body: JSON.stringify({ username: username, password: password }),  // Correctly format the request body
+        body: JSON.stringify({ email: email, password: password }),  // Correctly format the request body with email
       })
       .then(response => {
         console.log(response);
