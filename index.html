@@ -1,70 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Registration</title>
-</head>
+<html>
 <body>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username"><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password"><br>
+    <button type="submit">Login</button>
+  </form>
 
-<h2>Register as a Pro</h2>
+  <h2>Upload Lesson</h2>
+  <form id="uploadForm">
+    <input type="file" id="lessonFile" name="lessonFile"><br>
+    <button type="submit">Upload Lesson</button>
+  </form>
 
-<form id="registerForm">
-    <label for="name">Full Name:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password" required><br><br>
-
-    <label for="description">Description:</label><br>
-    <textarea id="description" name="description" required></textarea><br><br>
-
-    <label for="booking_link">Booking Link:</label><br>
-    <input type="url" id="booking_link" name="booking_link" required><br><br>
-
-    <button type="submit">Register</button>
-</form>
-
-<script>
-    document.getElementById('registerForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent default form submission
-
-        // Gather form data
-        const formData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value,
-            description: document.getElementById('description').value,
-            booking_link: document.getElementById('booking_link').value
-        };
-
-        // Send data to the /auth/register endpoint
-        fetch('https://thepocketproaiservice.online/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to register');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Registration successful:', data);
-            alert('Registration successful');
-        })
-        .catch(error => {
-            console.error('Error during registration:', error);
-            alert('Error during registration. Please try again.');
-        });
+      fetch('https://thepocketproaiservice.online/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem('token', data.token); // Save token
+          alert('Login Successful');
+        } else {
+          alert('Login Failed');
+        }
+      });
     });
-</script>
 
+    document.getElementById("uploadForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const token = localStorage.getItem('token');
+      const file = document.getElementById("lessonFile").files[0];
+      
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('https://thepocketproaiservice.online/upload_lesson', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+        },
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert('Upload Success');
+      })
+      .catch(error => alert('Upload Failed'));
+    });
+  </script>
 </body>
 </html>
