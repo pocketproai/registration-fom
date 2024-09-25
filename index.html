@@ -1,30 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pro Login and Lesson Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    h2 {
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="text"], input[type="password"], input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #lessonUploadForm {
+      display: none; /* Hidden by default, shown after login */
+    }
+  </style>
 </head>
 <body>
   <h2>Login</h2>
   <form id="loginForm">
     <label for="username">Username:</label>
-    <input type="text" id="username" name="username"><br>
+    <input type="text" id="username" name="username" required>
+
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password"><br>
+    <input type="password" id="password" name="password" required>
+
     <button type="submit">Login</button>
   </form>
 
-  <div id="lessonUploadForm" style="display:none;">
+  <div id="lessonUploadForm">
     <h2>Upload Lesson</h2>
     <form id="uploadForm">
       <label for="studentName">Student Name:</label>
-      <input type="text" id="studentName" name="student_name"><br>
+      <input type="text" id="studentName" name="student_name" required>
 
       <label for="phoneNumber">Phone Number:</label>
-      <input type="text" id="phoneNumber" name="phone_number"><br>
+      <input type="text" id="phoneNumber" name="phone_number" required>
 
       <label for="lessonFile">Upload Audio Lesson:</label>
-      <input type="file" id="lessonFile" name="lesson_file"><br>
-      
+      <input type="file" id="lessonFile" name="lesson_file" required>
+
       <button type="submit">Upload Lesson</button>
     </form>
   </div>
@@ -35,6 +73,7 @@
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
 
+      // Send POST request to the login API
       fetch('https://thepocketproaiservice.online/auth/login', {
         method: 'POST',
         headers: {
@@ -45,12 +84,19 @@
       .then(response => response.json())
       .then(data => {
         if (data.access_token) {
-          localStorage.setItem('token', data.access_token); // Save token
-          alert('Login Successful');
-          document.getElementById('lessonUploadForm').style.display = 'block'; // Show upload form after login
+          // Store the token in localStorage
+          localStorage.setItem('token', data.access_token);
+          alert('Login successful!');
+          
+          // Show the lesson upload form after successful login
+          document.getElementById('lessonUploadForm').style.display = 'block';
         } else {
-          alert('Login Failed');
+          alert('Login failed. Please check your credentials.');
         }
+      })
+      .catch(error => {
+        alert('An error occurred during login.');
+        console.error(error);
       });
     });
 
@@ -61,15 +107,17 @@
       const phone_number = document.getElementById("phoneNumber").value;
       const lesson_file = document.getElementById("lessonFile").files[0];
       
+      // Prepare form data for file upload
       const formData = new FormData();
       formData.append('student_name', student_name);
       formData.append('phone_number', phone_number);
       formData.append('lesson_file', lesson_file);
 
+      // Send POST request to the lesson upload API
       fetch('https://thepocketproaiservice.online/upload_lesson', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer ' + token,
+          'Authorization': 'Bearer ' + token, // Attach the token in the header
         },
         body: formData,
       })
@@ -77,9 +125,14 @@
       .then(data => {
         if (data.message) {
           alert(data.message);
+        } else {
+          alert('Upload failed.');
         }
       })
-      .catch(error => alert('Upload Failed: ' + error));
+      .catch(error => {
+        alert('An error occurred during upload.');
+        console.error(error);
+      });
     });
   </script>
 </body>
